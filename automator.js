@@ -14,4 +14,14 @@ Automator = (function() {
     namespace: "automator"
   };
 
-  function Automator(datastor
+  function Automator(datastore, options) {
+    if (options == null) {
+      options = {};
+    }
+    $.extend(this.options, options);
+    this.datastore = datastore;
+    this.categories = datastore.getTable("" + this.options.namespace + "-categories");
+    this.words = datastore.getTable("" + this.options.namespace + "-words");
+  }
+
+  Automator.prototyp
