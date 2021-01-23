@@ -32,4 +32,13 @@ Automator = (function() {
     _.map(this.words.query(), function(record) {
       return record.deleteRecord();
     });
-    return _.map(this.categories.query(), fun
+    return _.map(this.categories.query(), function(record) {
+      return record.deleteRecord();
+    });
+  };
+
+  Automator.prototype.train = function(text, category) {
+    var self, words;
+    category = category.toLowerCase();
+    words = text.toLowerCase().split(" ");
+    this._increment(this.categories, category)
