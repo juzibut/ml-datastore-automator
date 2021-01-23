@@ -24,4 +24,12 @@ Automator = (function() {
     this.words = datastore.getTable("" + this.options.namespace + "-words");
   }
 
-  Automator.prototyp
+  Automator.prototype.hasModel = function() {
+    return this.categories.query().length > 0;
+  };
+
+  Automator.prototype.clearModel = function() {
+    _.map(this.words.query(), function(record) {
+      return record.deleteRecord();
+    });
+    return _.map(this.categories.query(), fun
