@@ -51,4 +51,14 @@ Automator = (function() {
     });
   };
 
-  Automator.prototype.trainForce = 
+  Automator.prototype.trainForce = function(text, category) {
+    this.train(text, category);
+    if ((this.classify(text)).category !== category) {
+      return this.trainUntil(text, category);
+    } else {
+      return automator_log("Trained");
+    }
+  };
+
+  Automator.prototype.classify = function(text) {
+    var confid
