@@ -41,4 +41,14 @@ Automator = (function() {
     var self, words;
     category = category.toLowerCase();
     words = text.toLowerCase().split(" ");
-    this._increment(this.categories, category)
+    this._increment(this.categories, category);
+    self = this;
+    _.map(words, function(word) {
+      var categoryCount, record;
+      record = self._increment(self.words, word);
+      categoryCount = (record.get(category)) || 0;
+      return record.set(category, categoryCount + 1);
+    });
+  };
+
+  Automator.prototype.trainForce = 
