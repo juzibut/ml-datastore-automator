@@ -61,4 +61,12 @@ Automator = (function() {
   };
 
   Automator.prototype.classify = function(text) {
-    var confid
+    var confidence, maxC, maxCprime, maxP, maxPprime, self, words;
+    self = this;
+    maxC = "unknown";
+    maxP = 0;
+    maxCprime = "unknown";
+    maxPprime = 0;
+    words = text.toLowerCase().split(" ");
+    _.map(self.categories.query(), function(record) {
+      var category, p;
