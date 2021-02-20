@@ -79,4 +79,16 @@ Automator = (function() {
         maxC = category;
         return maxP = p;
       }
-    
+    });
+    automator_log("Pmax = " + maxP);
+    automator_log("Pprime = " + maxPprime);
+    confidence = ((maxP - maxPprime) / maxP) || 0;
+    if (confidence < 0.01) {
+      return {
+        category: "unknown",
+        reason: [],
+        confidence: confidence
+      };
+    }
+    return {
+      c
