@@ -70,3 +70,13 @@ Automator = (function() {
     words = text.toLowerCase().split(" ");
     _.map(self.categories.query(), function(record) {
       var category, p;
+      category = record.get("NAME");
+      p = self._getConditionalProbability(words, category);
+      automator_log("" + category + ", p = " + p);
+      if (p >= maxP) {
+        maxCprime = maxC;
+        maxPprime = maxP;
+        maxC = category;
+        return maxP = p;
+      }
+    
