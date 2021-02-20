@@ -91,4 +91,16 @@ Automator = (function() {
       };
     }
     return {
-      c
+      category: maxC,
+      reason: self._getReason(words, maxC),
+      confidence: confidence
+    };
+  };
+
+  Automator.prototype.toJSON = function() {
+    var categoryNames, propertyNames, response;
+    response = {
+      categories: [],
+      words: []
+    };
+    _.map(this.ca
