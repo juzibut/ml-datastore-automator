@@ -103,4 +103,11 @@ Automator = (function() {
       categories: [],
       words: []
     };
-    _.map(this.ca
+    _.map(this.categories.query(), function(record) {
+      return response.categories.push({
+        "NAME": record.get("NAME"),
+        "COUNT": record.get("COUNT")
+      });
+    });
+    categoryNames = _.map(response.categories, function(category) {
+      return categ
