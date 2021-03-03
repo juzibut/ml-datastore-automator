@@ -120,4 +120,16 @@ Automator = (function() {
         var val;
         val = record.get(property);
         if (val !== null) {
-    
+          return word[property] = val;
+        }
+      });
+      return response.words.push(word);
+    });
+    return response;
+  };
+
+  Automator.prototype.fromJSON = function(json) {
+    var self;
+    self = this;
+    _.map(json.categories, function(category) {
+      return self._incrementBy(self.c
