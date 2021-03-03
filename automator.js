@@ -110,4 +110,14 @@ Automator = (function() {
       });
     });
     categoryNames = _.map(response.categories, function(category) {
-      return categ
+      return category.NAME;
+    });
+    propertyNames = categoryNames.concat("NAME", "COUNT");
+    _.map(this.words.query(), function(record) {
+      var word;
+      word = {};
+      _.map(propertyNames, function(property) {
+        var val;
+        val = record.get(property);
+        if (val !== null) {
+    
