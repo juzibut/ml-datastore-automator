@@ -132,4 +132,11 @@ Automator = (function() {
     var self;
     self = this;
     _.map(json.categories, function(category) {
-      return self._incrementBy(self.c
+      return self._incrementBy(self.categories, category.NAME, category.COUNT);
+    });
+    _.map(json.words, function(word) {
+      var record;
+      record = self._incrementBy(self.words, word.NAME, word.COUNT);
+      return _.map(_.keys(word), function(category) {
+        var categoryCount;
+        if
