@@ -139,4 +139,13 @@ Automator = (function() {
       record = self._incrementBy(self.words, word.NAME, word.COUNT);
       return _.map(_.keys(word), function(category) {
         var categoryCount;
-        if
+        if (category !== "NAME" && category !== "COUNT") {
+          categoryCount = (record.get(category)) || 0;
+          return record.set(category, categoryCount + word[category]);
+        }
+      });
+    });
+  };
+
+  Automator.prototype._getConditionalProbability = function(words, givenCategory) {
+    var 
