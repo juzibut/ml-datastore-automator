@@ -148,4 +148,10 @@ Automator = (function() {
   };
 
   Automator.prototype._getConditionalProbability = function(words, givenCategory) {
-    var 
+    var category, categorySum, condWordSum, ipEvidence, pCategory, pCond, self, wordSum;
+    category = givenCategory.toLowerCase();
+    self = this;
+    ipEvidence = 1;
+    wordSum = this._sumTable(this.words);
+    _.map(words, function(word) {
+      return ipEvidence += Math.log(wordSum / (self._getW
