@@ -171,3 +171,15 @@ Automator = (function() {
   Automator.prototype._sumTable = function(table) {
     var sum;
     sum = 0;
+    _.map(table.query(), function(record) {
+      return sum += record.get("COUNT" || 0);
+    });
+    return sum;
+  };
+
+  Automator.prototype._sumTableConditional = function(table, category) {
+    var sum;
+    sum = 0;
+    _.map(table.query(), function(record) {
+      var categoryCount;
+  
