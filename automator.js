@@ -182,4 +182,16 @@ Automator = (function() {
     sum = 0;
     _.map(table.query(), function(record) {
       var categoryCount;
-  
+      categoryCount = record.get(category);
+      if (category != null) {
+        return sum += record.get(category || 0);
+      }
+    });
+    return sum;
+  };
+
+  Automator.prototype._getWordCount = function(word) {
+    var records;
+    records = this.words.query({
+      NAME: word
+    })
