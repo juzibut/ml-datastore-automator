@@ -154,4 +154,11 @@ Automator = (function() {
     ipEvidence = 1;
     wordSum = this._sumTable(this.words);
     _.map(words, function(word) {
-      return ipEvidence += Math.log(wordSum / (self._getW
+      return ipEvidence += Math.log(wordSum / (self._getWordCount(word)));
+    });
+    pCond = 0;
+    condWordSum = this._sumTableConditional(this.words, category);
+    _.map(words, function(word) {
+      return pCond += Math.log((self._getConditionalWordCount(word, category)) / condWordSum);
+    });
+    categorySum = this._sumTabl
