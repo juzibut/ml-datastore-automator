@@ -161,4 +161,13 @@ Automator = (function() {
     _.map(words, function(word) {
       return pCond += Math.log((self._getConditionalWordCount(word, category)) / condWordSum);
     });
-    categorySum = this._sumTabl
+    categorySum = this._sumTable(this.categories);
+    pCategory = Math.log((this._getCategoryCount(category)) / categorySum);
+    automator_log(category);
+    automator_log("" + pCond + " + " + pCategory + " + " + ipEvidence);
+    return pCond + pCategory + ipEvidence;
+  };
+
+  Automator.prototype._sumTable = function(table) {
+    var sum;
+    sum = 0;
