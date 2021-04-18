@@ -194,4 +194,18 @@ Automator = (function() {
     var records;
     records = this.words.query({
       NAME: word
-    })
+    });
+    if (records.length < 1) {
+      return 0;
+    }
+    return (records[0].get("COUNT")) || 0;
+  };
+
+  Automator.prototype._getConditionalWordCount = function(word, category) {
+    var records;
+    records = this.words.query({
+      NAME: word
+    });
+    if (records.length < 1) {
+      return 0;
+    }
