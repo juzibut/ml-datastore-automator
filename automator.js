@@ -220,4 +220,13 @@ Automator = (function() {
     if (records.length < 1) {
       return 0;
     }
-    return (records[0].get("COUNT
+    return (records[0].get("COUNT")) || 0;
+  };
+
+  Automator.prototype._getReason = function(words, category) {
+    var pairs, self;
+    self = this;
+    pairs = _.map(words, function(word) {
+      return {
+        word: word,
+        p: (self._getConditionalWordCount(word, category)) / (self._getWord
