@@ -209,3 +209,15 @@ Automator = (function() {
     if (records.length < 1) {
       return 0;
     }
+    return (records[0].get(category)) || 0;
+  };
+
+  Automator.prototype._getCategoryCount = function(category) {
+    var records;
+    records = this.categories.query({
+      NAME: category
+    });
+    if (records.length < 1) {
+      return 0;
+    }
+    return (records[0].get("COUNT
