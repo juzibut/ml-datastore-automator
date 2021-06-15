@@ -229,4 +229,17 @@ Automator = (function() {
     pairs = _.map(words, function(word) {
       return {
         word: word,
-        p: (self._getConditionalWordCount(word, category)) / (self._getWord
+        p: (self._getConditionalWordCount(word, category)) / (self._getWordCount(word))
+      };
+    });
+    pairs = _.filter(pairs, function(pair) {
+      return pair.p > 0.5;
+    });
+    pairs = _.sortBy(pairs, function(pair) {
+      return -1 * pair.p;
+    });
+    return _.pluck(pairs, "word");
+  };
+
+  Automator.prototype._increment = function(table, name) {
+    return this._incremen
