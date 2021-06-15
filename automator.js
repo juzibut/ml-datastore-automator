@@ -252,4 +252,16 @@ Automator = (function() {
     });
     record = records[0];
     if (records.length < 1) {
-      record = table.inser
+      record = table.insert({
+        NAME: name,
+        COUNT: 0
+      });
+    }
+    count = record.get("COUNT");
+    record.set('COUNT', count + increment);
+    return record;
+  };
+
+  return Automator;
+
+})();
