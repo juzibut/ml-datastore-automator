@@ -242,4 +242,14 @@ Automator = (function() {
   };
 
   Automator.prototype._increment = function(table, name) {
-    return this._incremen
+    return this._incrementBy(table, name, 1);
+  };
+
+  Automator.prototype._incrementBy = function(table, name, increment) {
+    var count, record, records;
+    records = table.query({
+      NAME: name
+    });
+    record = records[0];
+    if (records.length < 1) {
+      record = table.inser
