@@ -106,3 +106,85 @@ function isRecommended(title){
   var classification = NewsRanker.classify(getFeatures(title));
   return (classification.category == "recommend");
 }
+
+// Train on a piece of text, providing a boolean TRUE if it is recommended
+function train(title, recommendBool){
+  var classification = recommendBool ? "recommend" : "not";
+  NewsRanker.train(getFeatures(title), classification);
+}
+
+// Add a story to the page
+function addStory(story){
+
+  // Create the element
+  var link = $("<a target='_blank' />").attr("href", story.link).text(story.title);
+  var recommend = $("<span class='recommend' />");
+  var li = $("<li />").append(link);
+  li.append(recommend);
+
+
+  // Check if it's recommended by the classifier.
+  if (isRecommended(story.title) == true){
+    $('#nogeniusresults').hide();
+    li.addClass('recommended');
+    $('#genius').after(li);
+
+  // See if it was recommended by the user
+  }else{
+    var records = recommendedArticles.query({"title": story.title});
+    if (records.length > 0){
+      li.addClass('added');
+    }
+
+    $('#links').append(li);
+  }
+
+}
+
+function applyClickHandlers(){
+
+  var removeRecommendation = function(text){
+    var records = recommendedArticles.query({"title": text});
+    if (records.length > 0){
+      record = records[0];
+      record.deleteRecord();
+    }
+  };
+
+  var addRecommendation = function(text){
+    recommendedArticles.insert({
+      "title": text
+    });
+  };
+
+  var clickHandler = function(e){
+    var li = $(e.target).parent();
+    var link = li.find("a");
+
+    if (li.hasClass("recommended") == true){
+      train(link.text(), false);
+      removeRecommendation(link.text());
+      li.hide();
+    }else{
+      if (li.hasClass("added") == false){
+        train(link.text(), true);
+        addRecommendation(link.text());
+      }else{
+        train(link.text(), false);
+        removeRecommendation(link.text());
+      }
+      li.toggleClass("added");
+    }
+  };
+
+  $("span.recommend").click(clickHandler);
+
+}
+
+
+function showStories(){
+  getHeadlines(function(stories){
+    _.map(stories, addStory);
+    applyClickHandlers();
+  });
+}
