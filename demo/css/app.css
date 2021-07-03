@@ -49,4 +49,15 @@ body{
 #login a:hover{
 
   /*background: -webkit-linear-gradient(top, #3775FF, #0D55F3);*/
-  background: -webkit-linear-
+  background: -webkit-linear-gradient(top, #2162FF, #0850EB);
+  box-shadow: 0 2px 8px rgba(33, 119, 255, 0.5);
+  /*box-shadow: inset 0 5px 30px rgba(73, 141, 255, 0.3);*/
+}
+
+#login a:active{
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+
+  background: -webkit-linear-gradient(top, #0850EB, #0B62EB);
+}
+
+#l
