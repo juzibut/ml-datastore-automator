@@ -108,4 +108,16 @@ body{
   padding: 5px 50px 5px 20px;
   font-size: 12px;
   background: -webkit-linear-gradient(top, #DDD, #AAA);
-  border-bottom: 1px 
+  border-bottom: 1px solid #666;
+
+  text-transform: uppercase;
+  color: #555;
+  box-shadow:
+    inset 0 1px 0 #FFF,
+    0 2px 8px rgba(0,0,0,0.2);
+}
+
+.links li.head.recommended{
+  /*
+  background: -webkit-linear-gradient(top, #4C8AE1, #306BBE);
+  border-bottom: 1px solid #1B4F97
