@@ -78,4 +78,21 @@ body{
 
 .links li{
   font-size: 16px;
-  
+  line-height: 28px;
+  font-weight: bold;
+  padding: 20px 100px 20px 20px;
+  margin: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  color: #444;
+
+  position: relative;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+.links li:nth-child(odd){
+  background-color: #E0E0E0;
+}
+.l
