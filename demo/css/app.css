@@ -140,3 +140,21 @@ body{
   padding: 80px;
   height: 60px;
 }
+
+.links li.recommended{
+  background-color: #BCC2CA;
+  color: #3C6BAA;
+  background-color: #E5DFFF;
+  color: #311F7F;
+}
+
+.links li.recommended:nth-child(odd){
+  background-color: #D2CCE9;
+}
+.links li.recommended:hover{
+  background-color: #CEC2FD;
+  color: #3E27A0;
+}
+
+.links li.added{
+  backg
