@@ -95,4 +95,17 @@ body{
 .links li:nth-child(odd){
   background-color: #E0E0E0;
 }
-.l
+.links li:hover{
+  cursor: pointer;
+  background-color: #DEE8F6;
+  color: #113DAA;
+}
+.links li a{
+  text-decoration: none;
+  color: inherit;
+}
+.links li.head{
+  padding: 5px 50px 5px 20px;
+  font-size: 12px;
+  background: -webkit-linear-gradient(top, #DDD, #AAA);
+  border-bottom: 1px 
