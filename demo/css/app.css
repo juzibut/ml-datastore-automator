@@ -186,4 +186,17 @@ span.recommend{
   right: 30px;
   opacity: 0.3;
   width: 24px;
-  height:
+  height: 24px;
+  display: inline-block;
+  background-image: url('../img/glyphicons_190_circle_plus.png');
+
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+}
+
+span.recommend:hover{
+  opacity: 0.6;
+  /*background-image: url(
