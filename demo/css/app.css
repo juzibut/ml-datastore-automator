@@ -173,4 +173,17 @@ body{
 }
 
 .links li:last-child{
-  bo
+  border-bottom: none;
+  -webkit-border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+span.recommend{
+  position: absolute;
+  top: 24px;
+  right: 30px;
+  opacity: 0.3;
+  width: 24px;
+  height:
