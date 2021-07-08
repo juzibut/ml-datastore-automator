@@ -199,4 +199,15 @@ span.recommend{
 
 span.recommend:hover{
   opacity: 0.6;
-  /*background-image: url(
+  /*background-image: url('../img/great.png');*/
+}
+
+.added span.recommend{
+  background-image: url('../img/glyphicons_193_circle_ok.png');
+}
+.added span.recommend:hover{
+  opacity: 0.5;
+  background-image: url('../img/glyphicons_192_circle_remove.png');
+}
+
+.recommended span.reco
