@@ -210,4 +210,16 @@ span.recommend:hover{
   background-image: url('../img/glyphicons_192_circle_remove.png');
 }
 
-.recommended span.reco
+.recommended span.recommend{
+  opacity: 0;
+  background-image: url('../img/glyphicons_192_circle_remove.png');
+}
+
+.recommended:hover span.recommend{
+  opacity: 0.2;
+  /*background-image: url('../img/remove.png');*/
+}
+
+.recommended:hover span.recommend:hover{
+  opacity: 0.6;
+  /*ba
