@@ -222,4 +222,5 @@ span.recommend:hover{
 
 .recommended:hover span.recommend:hover{
   opacity: 0.6;
-  /*ba
+  /*background-image: url('../img/remove.png');*/
+}
