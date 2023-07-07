@@ -414,3 +414,303 @@ Script.prototype.runInNewContext = function (context) {
     document.body.appendChild(iframe);
 
     var win = iframe.contentWindow;
+
+    forEach(Object_keys(context), function (key) {
+        win[key] = context[key];
+    });
+
+    if (!win.eval && win.execScript) {
+        // win.eval() magically appears when this is called in IE:
+        win.execScript('null');
+    }
+
+    var res = win.eval(this.code);
+
+    forEach(Object_keys(win), function (key) {
+        context[key] = win[key];
+    });
+
+    document.body.removeChild(iframe);
+
+    return res;
+};
+
+Script.prototype.runInThisContext = function () {
+    return eval(this.code); // maybe...
+};
+
+Script.prototype.runInContext = function (context) {
+    // seems to be just runInNewContext on magical context objects which are
+    // otherwise indistinguishable from objects except plain old objects
+    // for the parameter segfaults node
+    return this.runInNewContext(context);
+};
+
+forEach(Object_keys(Script.prototype), function (name) {
+    exports[name] = Script[name] = function (code) {
+        var s = Script(code);
+        return s[name].apply(s, [].slice.call(arguments, 1));
+    };
+});
+
+exports.createScript = function (code) {
+    return exports.Script(code);
+};
+
+exports.createContext = Script.createContext = function (context) {
+    // not really sure what this one does
+    // seems to just make a shallow copy
+    var copy = {};
+    if(typeof context === 'object') {
+        forEach(Object_keys(context), function (key) {
+            copy[key] = context[key];
+        });
+    }
+    return copy;
+};
+});
+
+require.define("/lib/natural/phonetics/soundex.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+var Phonetic = require('./phonetic');
+
+function transformLipps(token) {
+    return token.replace(/[bfpv]/g, '1');
+}
+
+function transformThroats(token) {
+    return token.replace(/[cgjkqsxz]/g, '2');
+}
+
+function transformToungue(token) {
+    return token.replace(/[dt]/g, '3');
+}
+
+function transformL(token) {
+    return token.replace(/l/g, '4');
+}
+
+function transformHum(token) {
+    return token.replace(/[mn]/g, '5');
+}
+
+function transformR(token) {
+    return token.replace(/r/g, '6');
+}
+
+function condense(token) {
+    return token.replace(/(\d)[hw]?\1+/g, '$1').replace(/[hw]/g, '');
+}
+
+function padRight0(token) {
+    if(token.length < 4)
+        return token + Array(4 - token.length).join('0');
+    else
+        return token;
+}
+
+var SoundEx = new Phonetic();
+module.exports = SoundEx;
+
+SoundEx.process = function(token, maxLength) {
+    token = token.toLowerCase();
+
+    return token.charAt(0).toUpperCase() + padRight0(condense(transformLipps(transformThroats(
+        transformToungue(transformL(transformHum(transformR(
+            token.substr(1, token.length - 1).replace(/[aeiouy]/g, '')))))))
+                )).substr(0, (maxLength && maxLength - 1) || 3);
+};
+
+// export for tests;
+SoundEx.transformLipps = transformLipps;
+SoundEx.transformThroats = transformThroats;
+SoundEx.transformToungue = transformToungue;
+SoundEx.transformL = transformL;
+SoundEx.transformHum = transformHum;
+SoundEx.transformR = transformR;
+SoundEx.condense = condense;
+SoundEx.padRight0 = padRight0;
+});
+
+require.define("/lib/natural/phonetics/phonetic.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+var stopwords = require('../util/stopwords');
+var Tokenizer = new require('../tokenizers/aggressive_tokenizer')
+    tokenizer = new Tokenizer();
+
+module.exports = function() {
+    this.compare = function(stringA, stringB) {
+        return this.process(stringA) == this.process(stringB);
+    };
+
+    this.attach = function() {
+  var phonetic = this;
+
+        String.prototype.soundsLike = function(compareTo) {
+            return phonetic.compare(this, compareTo);
+        }
+
+        String.prototype.phonetics = function() {
+            return phonetic.process(this);
+        }
+
+        String.prototype.tokenizeAndPhoneticize = function(keepStops) {
+            var phoneticizedTokens = [];
+
+            tokenizer.tokenize(this).forEach(function(token) {
+                if(keepStops || stopwords.words.indexOf(token) < 0)
+                    phoneticizedTokens.push(token.phonetics());
+            });
+
+            return phoneticizedTokens;
+        }
+    };
+};
+});
+
+require.define("/lib/natural/util/stopwords.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+// a list of commonly used words that have little meaning and can be excluded
+// from analysis.
+var words = [
+    'about', 'after', 'all', 'also', 'am', 'an', 'and', 'another', 'any', 'are', 'as', 'at', 'be',
+    'because', 'been', 'before', 'being', 'between', 'both', 'but', 'by', 'came', 'can',
+    'come', 'could', 'did', 'do', 'each', 'for', 'from', 'get', 'got', 'has', 'had',
+    'he', 'have', 'her', 'here', 'him', 'himself', 'his', 'how', 'if', 'in', 'into',
+    'is', 'it', 'like', 'make', 'many', 'me', 'might', 'more', 'most', 'much', 'must',
+    'my', 'never', 'now', 'of', 'on', 'only', 'or', 'other', 'our', 'out', 'over',
+    'said', 'same', 'see', 'should', 'since', 'some', 'still', 'such', 'take', 'than',
+    'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'this', 'those',
+    'through', 'to', 'too', 'under', 'up', 'very', 'was', 'way', 'we', 'well', 'were',
+    'what', 'where', 'which', 'while', 'who', 'with', 'would', 'you', 'your',
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+    'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$', '1',
+    '2', '3', '4', '5', '6', '7', '8', '9', '0', '_'];
+
+// tell the world about the noise words.
+exports.words = words;
+});
+
+require.define("/lib/natural/phonetics/metaphone.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+var Phonetic = require('./phonetic');
+
+function dedup(token) {
+    return token.replace(/([^c])\1/g, '$1');
+}
+
+function dropInitialLetters(token) {
+    if(token.match(/^(kn|gn|pn|ae|wr)/))
+        return token.substr(1, token.length - 1);
+
+    return token;
+}
+
+function dropBafterMAtEnd(token) {
+    return token.replace(/mb$/, 'm');
+}
+
+function cTransform(token) {
+    token = token.replace(/([^s]|^)(c)(h)/g, '$1x$3').trim();
+    token = token.replace(/cia/g, 'xia');
+    token = token.replace(/c(i|e|y)/g, 's$1');
+    token = token.replace(/c/g, 'k');
+
+    return token;
+}
+
+function dTransform(token) {
+    token = token.replace(/d(ge|gy|gi)/g, 'j$1');
+    token = token.replace(/d/g, 't');
+
+    return token;
+}
+
+function dropG(token) {
+    token = token.replace(/gh(^$|[^aeiou])/g, 'h$1');
+    token = token.replace(/g(n|ned)$/g, '$1');
+
+    return token;
+}
+
+function transformG(token) {
