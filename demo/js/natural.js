@@ -714,3 +714,293 @@ function dropG(token) {
 }
 
 function transformG(token) {
+    token = token.replace(/([^g]|^)(g)(i|e|y)/g, '$1j$3');
+    token = token.replace(/gg/g, 'g');
+    token = token.replace(/g/g, 'k');
+
+    return token;
+}
+
+function dropH(token) {
+    return token.replace(/([aeiou])h([^aeiou])/g, '$1$2');
+}
+
+function transformCK(token) {
+    return token.replace(/ck/g, 'k');
+}
+function transformPH(token) {
+    return token.replace(/ph/g, 'f');
+}
+
+function transformQ(token) {
+    return token.replace(/q/g, 'k');
+}
+
+function transformS(token) {
+    return token.replace(/s(h|io|ia)/g, 'x$1');
+}
+
+function transformT(token) {
+    token = token.replace(/t(ia|io)/g, 'x$1');
+    token = token.replace(/th/, '0');
+
+    return token;
+}
+
+function dropT(token) {
+    return token.replace(/tch/g, 'ch');
+}
+
+function transformV(token) {
+    return token.replace(/v/g, 'f');
+}
+
+function transformWH(token) {
+    return token.replace(/^wh/, 'w');
+}
+
+function dropW(token) {
+    return token.replace(/w([^aeiou]|$)/g, '$1');
+}
+
+function transformX(token) {
+    token = token.replace(/^x/, 's');
+    token = token.replace(/x/g, 'ks');
+    return token;
+}
+
+function dropY(token) {
+    return token.replace(/y([^aeiou]|$)/g, '$1');
+}
+
+function transformZ(token) {
+    return token.replace(/z/, 's');
+}
+
+function dropVowels(token) {
+    return token.charAt(0) + token.substr(1, token.length).replace(/[aeiou]/g, '');
+}
+
+var Metaphone = new Phonetic();
+module.exports = Metaphone;
+
+Metaphone.process = function(token, maxLength) {
+    maxLength == maxLength || 32;
+    token = token.toLowerCase();
+    token = dedup(token);
+    token = dropInitialLetters(token);
+    token = dropBafterMAtEnd(token);
+    token = transformCK(token);
+    token = cTransform(token);
+    token = dTransform(token);
+    token = dropG(token);
+    token = transformG(token);
+    token = dropH(token);
+    token = transformPH(token);
+    token = transformQ(token);
+    token = transformS(token);
+    token = transformX(token);
+    token = transformT(token);
+    token = dropT(token);
+    token = transformV(token);
+    token = transformWH(token);
+    token = dropW(token);
+    token = dropY(token);
+    token = transformZ(token);
+    token = dropVowels(token);
+
+    token.toUpperCase();
+    if(token.length >= maxLength)
+        token = token.substring(0, maxLength);
+
+    return token.toUpperCase();
+};
+
+// expose functions for testing
+Metaphone.dedup = dedup;
+Metaphone.dropInitialLetters = dropInitialLetters;
+Metaphone.dropBafterMAtEnd = dropBafterMAtEnd;
+Metaphone.cTransform = cTransform;
+Metaphone.dTransform = dTransform;
+Metaphone.dropG = dropG;
+Metaphone.transformG = transformG;
+Metaphone.dropH = dropH;
+Metaphone.transformCK = transformCK;
+Metaphone.transformPH = transformPH;
+Metaphone.transformQ = transformQ;
+Metaphone.transformS = transformS;
+Metaphone.transformT = transformT;
+Metaphone.dropT = dropT;
+Metaphone.transformV = transformV;
+Metaphone.transformWH = transformWH;
+Metaphone.dropW = dropW;
+Metaphone.transformX = transformX;
+Metaphone.dropY = dropY;
+Metaphone.transformZ = transformZ;
+Metaphone.dropVowels = dropVowels;
+});
+
+require.define("/lib/natural/phonetics/double_metaphone.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+var Phonetic = require('./phonetic');
+
+var DoubleMetaphone = new Phonetic();
+module.exports = DoubleMetaphone;
+
+function isVowel(c) {
+  return c && c.match(/[aeiouy]/i);
+}
+
+function truncate(string, length) {
+    if(string.length >= length)
+        string = string.substring(0, length);
+
+    return string;
+}
+
+function process(token, maxLength) {
+  token = token.toUpperCase();
+  var primary = '', secondary = '';
+    var pos = 0;
+    maxLength == maxLength || 32;
+
+    function subMatch(startOffset, stopOffset, terms) {
+        return subMatchAbsolute(pos + startOffset, pos + stopOffset, terms);
+    }
+
+    function subMatchAbsolute(startOffset, stopOffset, terms) {
+        return terms.indexOf(token.substring(startOffset, stopOffset)) > -1;
+    }
+
+    function addSecondary(primaryAppendage, secondaryAppendage) {
+      primary += primaryAppendage;
+      secondary += secondaryAppendage;
+    }
+
+    function add(primaryAppendage) {
+      addSecondary(primaryAppendage, primaryAppendage);
+    }
+
+    function addCompressedDouble(c, encoded) {
+      if(token[pos + 1] == c)
+        pos++;
+      add(encoded || c);
+    }
+
+    function handleC() {
+        if(pos > 1 && !isVowel(token[pos - 2])
+                && token[pos - 1] == 'A' && token[pos + 1] == 'H'
+                    && (token[pos + 2] != 'I' && token[pos + 2] != 'I')
+                        || subMatch(-2, 4, ['BACHER', 'MACHER'])) {
+            add('K');
+            pos++;
+        } else if(pos == 0 && token.substring(1, 6) == 'EASAR') {
+            add('S');
+            pos++;
+        } else if(token.substring(pos + 1, pos + 4) == 'HIA') {
+            add('K');
+            pos++;
+        } else if(token[pos + 1] == 'H') {
+            if(pos > 0 && token.substring(pos + 2, pos + 4) == 'AE') {
+                addSecondary('K', 'X');
+                pos++;
+            } else if(pos == 0
+                        && (subMatch(1, 6, ['HARAC', 'HARIS'])
+                            || subMatch(1, 3, ['HOR', 'HUM', 'HIA', 'HEM']))
+                        && token.substring(pos + 1, pos + 5) != 'HORE') {
+                add('K');
+                pos++;
+            } else {
+                if((subMatchAbsolute(0, 3, ['VAN', 'VON']) || token.substring(0,  3) == 'SCH')
+                    || subMatch(-2, 4, ['ORCHES', 'ARCHIT', 'ORCHID'])
+                    || subMatch(2, 3, ['T', 'S'])
+                    || ((subMatch(-1, 0, ['A', 'O', 'U', 'E']) || pos == 0)
+                        && subMatch(2, 3, ['B', 'F', 'H', 'L', 'M', 'N', 'R', 'V', 'W']))) {
+                    add('K');
+                } else if(pos > 0) {
+                    if(token.substring(0, 2) == 'MC') {
+                        add('K');
+                    } else {
+                        addSecondary('X', 'K');
+                    }
+                } else {
+                    add('X');
+                }
+
+                pos++;
+            }
+        } else if(token.substring(pos, pos + 2) == 'CZ'
+                && token.substring(pos - 2, pos + 1) != 'WICZ') {
+            addSecondary('S', 'X');
+            pos++;
+        } else if(token.substring(pos, pos + 3) == 'CIA') {
+            add('X');
+            pos += 2;
+        } else if(token[pos + 1] == 'C' && pos != 1 && token[0] != 'M') {
+            if(['I', 'E', 'H'].indexOf(token[pos + 2]) > -1
+                    && token.substring(pos + 2, pos + 4) != 'HU') {
+                if(pos == 1 && token[pos - 1] == 'A'
+                        || subMatch(-1, 4, ['UCCEE', 'UCCES'])) {
+                    add('KS');
+                } else {
+                   add('X');
+                }
+
+               pos +=2;
+            } else {
+                add('K');
+                pos++;
+            }
+        } else if(['K', 'G', 'Q'].indexOf(token[pos + 1]) > -1) {
+            add('K');
+            pos++;
+        } else if(['E', 'I', 'Y'].indexOf(token[pos + 1]) > -1) {
+            if(subMatch(1, 3, ['IA', 'IE', 'IO'])) {
+                addSecondary('S', 'X');
+            } else {
+                add('S');
+            }
+            pos++;
+        } else {
+            add('K');
+            if(token[pos + 1] == ' ' && ['C', 'Q', 'G'].indexOf(token[pos + 2])) {
+                pos += 2;
+            } else if(['C', 'K', 'Q'].indexOf(token[pos + 1]) > -1
+                    && !subMatch(1, 3, ['CE', 'CI'])) {
+                pos++;
+            }
+        }
+    }
+
+    function handleD() {
+      if(token[pos + 1] == 'G') {
+        if(['I', 'E', 'Y'].indexOf(token[pos + 2]) > -1)  {
+          add('J');
+          pos += 2;
+        } else {
+          add('TK');
+          pos++;
+        }
+      } else if(token[pos + 1] == 'T') {
+        add('T');
+        pos++;
