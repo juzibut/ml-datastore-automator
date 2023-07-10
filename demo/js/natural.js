@@ -1004,3 +1004,290 @@ function process(token, maxLength) {
       } else if(token[pos + 1] == 'T') {
         add('T');
         pos++;
+      } else
+        addCompressedDouble('D', 'T');
+    }
+
+    function handleG() {
+        if(token[pos + 1] == 'H') {
+            if(pos > 0 && !isVowel(token[pos - 1])) {
+                add('K');
+                pos++;
+            } else if(pos == 0) {
+                if(token[pos + 2] == 'I') {
+                    add('J');
+                } else {
+                    add('K');
+                }
+                pos++;
+            } else if(pos > 1
+                && (['B', 'H', 'D'].indexOf(token[pos - 2]) > -1
+                    || ['B', 'H', 'D'].indexOf(token[pos - 3]) > -1
+                    || ['B', 'H'].indexOf(token[pos - 4]) > -1)) {
+                pos++;
+            } else {
+                if(pos > 2
+                        && token[pos - 1] == 'U'
+                        && ['C', 'G', 'L', 'R', 'T'].indexOf(token[pos - 3]) > -1) {
+                    add('F');
+                } else if(token[pos - 1] != 'I') {
+                    add('K');
+                }
+
+                pos++;
+            }
+        } else if(token[pos + 1] == 'N') {
+            if(pos == 1 && startsWithVowel && !slavoGermanic) {
+                addSecondary('KN', 'N');
+            } else {
+                if(token.substring(pos + 2, pos + 4) != 'EY'
+                        && (token[pos + 1] != 'Y'
+                            && !slavoGermanic)) {
+                    addSecondary('N', 'KN');
+                } else
+                    add('KN');
+            }
+            pos++;
+        } else if(token.substring(pos + 1, pos + 3) == 'LI' && !slavoGermanic) {
+            addSecondary('KL', 'L');
+            pos++;
+        } else if(pos == 0 && (token[pos + 1] == 'Y'
+                || subMatch(1, 3, ['ES', 'EP', 'EB', 'EL', 'EY', 'IB', 'IL', 'IN', 'IE', 'EI', 'ER']))) {
+            addSecondary('K', 'J')
+        } else {
+            addCompressedDouble('G', 'K');
+        }
+    }
+
+    function handleH() {
+    // keep if starts a word or is surrounded by vowels
+    if((pos == 0 || isVowel(token[pos - 1])) && isVowel(token[pos + 1])) {
+      add('H');
+      pos++;
+    }
+    }
+
+    function handleJ() {
+        var jose = (token.substring(pos + 1, pos + 4) == 'OSE');
+
+        if(san || jose) {
+            if((pos == 0 && token[pos + 4] == ' ')
+                    || san) {
+                add('H');
+            } else
+                add('J', 'H');
+        } else {
+            if(pos == 0/* && !jose*/) {
+                addSecondary('J', 'A');
+            } else if(isVowel(token[pos - 1]) && !slavoGermanic
+                    && (token[pos + 1] == 'A' || token[pos + 1] == 'O')) {
+                addSecondary('J', 'H');
+            } else if(pos == token.length - 1) {
+                addSecondary('J', ' ');
+            } else
+                addCompressedDouble('J');
+        }
+    }
+
+    function handleL() {
+      if(token[pos + 1] == 'L') {
+        if(pos == token.length - 3 && (
+              subMatch(-1, 3, ['ILLO', 'ILLA', 'ALLE']) || (
+                token.substring(pos - 1, pos + 3) == 'ALLE' &&
+                (subMatch(-2, -1, ['AS', 'OS']) > -1 ||
+                ['A', 'O'].indexOf(token[token.length - 1]) > -1)))) {
+          addSecondary('L', '');
+          pos++;
+          return;
+        }
+        pos++;
+      }
+      add('L');
+    }
+
+    function handleM() {
+      addCompressedDouble('M');
+      if(token[pos - 1] == 'U' && token[pos + 1] == 'B' &&
+          ((pos == token.length - 2  || token.substring(pos + 2, pos + 4) == 'ER')))
+        pos++;
+    }
+
+    function handleP() {
+      if(token[pos + 1] == 'H') {
+        add('F');
+        pos++;
+      } else {
+        addCompressedDouble('P');
+
+      if(token[pos + 1] == 'B')
+          pos++;
+      }
+    }
+
+    function handleR() {
+      if(pos == token.length - 1 && !slavoGermanic
+          && token.substring(pos - 2, pos) == 'IE'
+          && !subMatch(-4, -3, ['ME', 'MA'])) {
+        addSecondary('', 'R');
+      } else
+        addCompressedDouble('R');
+    }
+
+    function handleS() {
+        if(pos == 0 && token.substring(0, 5) == 'SUGAR') {
+            addSecondary('X', 'S');
+        } else if(token[pos + 1] == 'H') {
+            if(subMatch(2, 5, ['EIM', 'OEK', 'OLM', 'OLZ'])) {
+                add('S');
+            } else {
+                add('X');
+            }
+            pos++;
+        } else if(subMatch(1, 3, ['IO', 'IA'])) {
+            if(slavoGermanic) {
+                add('S');
+            } else {
+                addSecondary('S', 'X');
+            }
+            pos++;
+        } else if((pos == 0 && ['M', 'N', 'L', 'W'].indexOf(token[pos + 1]) > -1)
+                || token[pos + 1] == 'Z') {
+            addSecondary('S', 'X');
+            if(token[pos + 1] == 'Z')
+                pos++;
+        } else if(token.substring(pos, pos + 2) == 'SC') {
+            if(token[pos + 2] == 'H') {
+                if(subMatch(3, 5, ['ER', 'EN'])) {
+                    addSecondary('X', 'SK');
+                } else if(subMatch(3, 5, ['OO', 'UY', 'ED', 'EM'])) {
+                    add('SK');
+                } else if(pos == 0 && !isVowel(token[3]) && token[3] != 'W') {
+                    addSecondary('X', 'S');
+                } else {
+                    add('X');
+                }
+            } else if(['I', 'E', 'Y'].indexOf(token[pos + 2]) > -1) {
+                add('S');
+            } else {
+                add('SK');
+            }
+
+            pos += 2;
+        } else if(pos == token.length - 1
+                && subMatch(-2, 0, ['AI', 'OI'])) {
+            addSecondary('', 'S');
+        } else if(token[pos + 1] != 'L' && (
+                token[pos - 1] != 'A' && token[pos - 1] != 'I')) {
+            addCompressedDouble('S');
+            if(token[pos + 1] == 'Z')
+                pos++;
+        }
+    }
+
+    function handleT() {
+        if(token.substring(pos + 1, pos + 4) == 'ION') {
+            add('XN');
+            pos += 3;
+        } else if(subMatch(1, 3, ['IA', 'CH'])) {
+            add('X');
+            pos += 2;
+        } else if(token[pos + 1] == 'H'
+                || token.substring(1, 2) == 'TH') {
+            if(subMatch(2, 4, ['OM', 'AM'])
+                    || ['VAN ', 'VON '].indexOf(token.substring(0, 4)) > -1
+                    || token.substring(0, 3) == 'SCH') {
+                add('T');
+            } else
+                addSecondary('0', 'T');
+            pos++;
+        } else {
+            addCompressedDouble('T');
+
+            if(token[pos + 1] == 'D')
+                pos++;
+        }
+    }
+
+    function handleX() {
+      if(pos == 0) {
+        add('S');
+      } else if(!(pos == token.length - 1
+          && (['IAU', 'EAU', 'IEU'].indexOf(token.substring(pos - 3, pos)) > -1
+            || ['AU', 'OU'].indexOf(token.substring(pos - 2, pos)) > -1))) {
+        add('KS');
+      }
+    }
+
+    function handleW() {
+        if(pos == 0) {
+            if(token[1] == 'H') {
+                add('A');
+            } else if (isVowel(token[1])) {
+                addSecondary('A', 'F');
+            }
+        } else if((pos == token.length - 1 && isVowel(token[pos - 1])
+                    || subMatch(-1, 4, ['EWSKI', 'EWSKY', 'OWSKI', 'OWSKY'])
+                    || token.substring(0, 3) == 'SCH')) {
+                addSecondary('', 'F');
+                pos++;
+        } else if(['ICZ', 'ITZ'].indexOf(token.substring(pos + 1, pos + 4)) > -1) {
+            addSecondary('TS', 'FX');
+            pos += 3;
+        }
+    }
+
+    function handleZ() {
+        if(token[pos + 1] == 'H') {
+            add('J');
+            pos++;
+        } else if(subMatch(1, 3, ['ZO', 'ZI', 'ZA'])
+                || (slavoGermanic && pos > 0 && token[pos - 1] != 'T')) {
+            addSecondary('S', 'TS');
+            pos++;
+        } else
+            addCompressedDouble('Z', 'S');
+    }
+
+    var san = (token.substring(0, 3) == 'SAN');
+    var startsWithVowel = isVowel(token[0]);
+    var slavoGermanic = token.match(/(W|K|CZ|WITZ)/);
+
+    if(subMatch(0, 2, ['GN', 'KN', 'PN', 'WR', 'PS'])) {
+      pos++;
+    }
+
+    while(pos < token.length) {
+      switch(token[pos]) {
+          case 'A': case 'E': case 'I': case 'O': case 'U': case 'Y':
+          case 'Ê': case 'É': case 'É': case'À':
+            if(pos == 0)
+              add('A');
+            break;
+        case 'B':
+          addCompressedDouble('B', 'P');
+          break;
+            case 'C':
+                handleC();
+                break;
+          case 'Ç':
+              add("S");
+              break;
+          case 'D':
+            handleD();
+            break;
+          case 'F': case 'K': case 'N':
+            addCompressedDouble(token[pos]);
+            break;
+            case 'G':
+                handleG();
+                break;
+          case 'H':
+            handleH();
+            break;
+            case 'J':
+                handleJ();
+                break;
+          case 'L':
+            handleL();
+            break;
+          case 'M':
