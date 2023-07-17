@@ -2823,3 +2823,283 @@ exports.rules = {
             "pattern": "j",
             "size": "1"
         }
+    ],
+    "l": [
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ifiabl",
+            "size": "6"
+        },
+        {
+            "appendage": "y",
+            "continuation": false,
+            "intact": false,
+            "pattern": "iabl",
+            "size": "4"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "abl",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ibl",
+            "size": "3"
+        },
+        {
+            "appendage": "l",
+            "continuation": true,
+            "intact": false,
+            "pattern": "bil",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "cl",
+            "size": "1"
+        },
+        {
+            "appendage": "y",
+            "continuation": false,
+            "intact": false,
+            "pattern": "iful",
+            "size": "4"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ful",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ul",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ial",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ual",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "al",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ll",
+            "size": "1"
+        }
+    ],
+    "m": [
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ium",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "um",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ism",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "mm",
+            "size": "1"
+        }
+    ],
+    "n": [
+        {
+            "appendage": "j",
+            "continuation": true,
+            "intact": false,
+            "pattern": "sion",
+            "size": "4"
+        },
+        {
+            "appendage": "c",
+            "continuation": false,
+            "intact": false,
+            "pattern": "xion",
+            "size": "4"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ion",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ian",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "an",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "een",
+            "size": "0"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "en",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "nn",
+            "size": "1"
+        }
+    ],
+    "p": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ship",
+            "size": "4"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "pp",
+            "size": "1"
+        }
+    ],
+    "r": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "er",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ear",
+            "size": "0"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ar",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "or",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ur",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "rr",
+            "size": "1"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "tr",
+            "size": "1"
+        },
+        {
+            "appendage": "y",
+            "continuation": true,
+            "intact": false,
+            "pattern": "ier",
+            "size": "3"
+        }
+    ],
+    "s": [
+        {
+            "appendage": "y",
+            "continuation": true,
+            "intact": false,
+            "pattern": "ies",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "sis",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "is",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ness",
+            "size": "4"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ss",
+            "size": "0"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ous",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "us",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": true,
+            "pattern": "s",
+            "size": "1"
+        },
+        {
+            "continuation": false,
+            "intact": false,
