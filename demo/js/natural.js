@@ -2511,3 +2511,315 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+
+var Stemmer = require('./stemmer');
+var ruleTable = require('./lancaster_rules').rules;
+
+function acceptable(candidate) {
+    if (candidate.match(/^[aeiou]/))
+        return (candidate.length > 1);
+    else
+        return (candidate.length > 2 && candidate.match(/[aeiouy]/));
+}
+
+// take a token, look up the applicatble rule section and attempt some stemming!
+function applyRuleSection(token, intact) {
+    var section = token.substr( - 1);
+    var rules = ruleTable[section];
+
+    if (rules) {
+        for (var i = 0; i < rules.length; i++) {
+            if ((intact || !rules[i].intact)
+            // only apply intact rules to intact tokens
+            && token.substr(0 - rules[i].pattern.length) == rules[i].pattern) {
+                // hack off only as much as the rule indicates
+                var result = token.substr(0, token.length - rules[i].size);
+
+                // if the rules wants us to apply an appendage do so
+                if (rules[i].appendage)
+                    result += rules[i].appendage;
+
+                if (acceptable(result)) {
+                    token = result;
+
+                    // see what the rules wants to do next
+                    if (rules[i].continuation) {
+                        // this rule thinks there still might be stem left. keep at it.
+                        // since we've applied a change we'll pass false in for intact
+                        return applyRuleSection(result, false);
+                    } else {
+                        // the rule thinks we're done stemming. drop out.
+                        return result;
+                    }
+                }
+            }
+        }
+    }
+
+    return token;
+}
+
+var LancasterStemmer = new Stemmer();
+module.exports = LancasterStemmer;
+
+LancasterStemmer.stem = function(token) {
+    return applyRuleSection(token.toLowerCase(), true);
+}});
+
+require.define("/lib/natural/stemmers/lancaster_rules.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+exports.rules = {
+    "a": [
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "ia",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "a",
+            "size": "1"
+        }
+    ],
+    "b": [
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "bb",
+            "size": "1"
+        }
+    ],
+    "c": [
+        {
+            "appendage": "s",
+            "continuation": false,
+            "intact": false,
+            "pattern": "ytic",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ic",
+            "size": "2"
+       },
+        {
+            "appendage": "t",
+            "continuation": true,
+            "intact": false,
+            "pattern": "nc",
+            "size": "1"
+        }
+    ],
+    "d": [
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "dd",
+            "size": "1"
+        },
+        {
+            "appendage": "y",
+            "continuation": true,
+            "intact": false,
+            "pattern": "ied",
+            "size": "3"
+        },
+        {
+            "appendage": "s",
+            "continuation": false,
+            "intact": false,
+            "pattern": "ceed",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "eed",
+            "size": "1"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ed",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "hood",
+            "size": "4"
+        }
+    ],
+    "e": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "e",
+            "size": "1"
+        }
+    ],
+    "f": [
+        {
+            "appendage": "v",
+            "continuation": false,
+            "intact": false,
+            "pattern": "lief",
+            "size": "1"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "if",
+            "size": "2"
+        }
+    ],
+    "g": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ing",
+            "size": "3"
+        },
+        {
+            "appendage": "y",
+            "continuation": false,
+            "intact": false,
+            "pattern": "iag",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ag",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "gg",
+            "size": "1"
+        }
+    ],
+    "h": [
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "th",
+            "size": "2"
+        },
+        {
+            "appendage": "c",
+            "continuation": false,
+            "intact": false,
+            "pattern": "guish",
+            "size": "5"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ish",
+            "size": "3"
+        }
+    ],
+    "i": [
+        {
+            "continuation": false,
+            "intact": true,
+            "pattern": "i",
+            "size": "1"
+        },
+        {
+            "appendage": "y",
+            "continuation": true,
+            "intact": false,
+            "pattern": "i",
+            "size": "1"
+        }
+    ],
+    "j": [
+        {
+            "appendage": "d",
+            "continuation": false,
+            "intact": false,
+            "pattern": "ij",
+            "size": "1"
+        },
+        {
+            "appendage": "s",
+            "continuation": false,
+            "intact": false,
+            "pattern": "fuj",
+            "size": "1"
+        },
+        {
+            "appendage": "d",
+            "continuation": false,
+            "intact": false,
+            "pattern": "uj",
+            "size": "1"
+        },
+        {
+            "appendage": "d",
+            "continuation": false,
+            "intact": false,
+            "pattern": "oj",
+            "size": "1"
+        },
+        {
+            "appendage": "r",
+            "continuation": false,
+            "intact": false,
+            "pattern": "hej",
+            "size": "1"
+        },
+        {
+            "appendage": "t",
+            "continuation": false,
+            "intact": false,
+            "pattern": "verj",
+            "size": "1"
+        },
+        {
+            "appendage": "t",
+            "continuation": false,
+            "intact": false,
+            "pattern": "misj",
+            "size": "2"
+        },
+        {
+            "appendage": "d",
+            "continuation": false,
+            "intact": false,
+            "pattern": "nj",
+            "size": "1"
+        },
+        {
+            "appendage": "s",
+            "continuation": false,
+            "intact": false,
+            "pattern": "j",
+            "size": "1"
+        }
