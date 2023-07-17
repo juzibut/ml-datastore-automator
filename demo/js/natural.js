@@ -3103,3 +3103,260 @@ exports.rules = {
         {
             "continuation": false,
             "intact": false,
+            "pattern": "s",
+            "size": "0"
+        }
+    ],
+    "t": [
+        {
+            "appendage": "y",
+            "continuation": false,
+            "intact": false,
+            "pattern": "plicat",
+            "size": "4"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "at",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ment",
+            "size": "4"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ent",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ant",
+            "size": "3"
+        },
+        {
+            "appendage": "b",
+            "continuation": false,
+            "intact": false,
+            "pattern": "ript",
+            "size": "2"
+        },
+        {
+            "appendage": "b",
+            "continuation": false,
+            "intact": false,
+            "pattern": "orpt",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "duct",
+            "size": "1"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "sumpt",
+            "size": "2"
+        },
+        {
+            "appendage": "i",
+            "continuation": false,
+            "intact": false,
+            "pattern": "cept",
+            "size": "2"
+        },
+        {
+            "appendage": "v",
+            "continuation": false,
+            "intact": false,
+            "pattern": "olut",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "sist",
+            "size": "0"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ist",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "tt",
+            "size": "1"
+        }
+    ],
+    "u": [
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "iqu",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ogu",
+            "size": "1"
+        }
+    ],
+    "v": [
+        {
+            "appendage": "j",
+            "continuation": true,
+            "intact": false,
+            "pattern": "siv",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "eiv",
+            "size": "0"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "iv",
+            "size": "2"
+        }
+    ],
+    "y": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "bly",
+            "size": "1"
+        },
+        {
+            "appendage": "y",
+            "continuation": true,
+            "intact": false,
+            "pattern": "ily",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ply",
+            "size": "0"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ly",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ogy",
+            "size": "1"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "phy",
+            "size": "1"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "omy",
+            "size": "1"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "opy",
+            "size": "1"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ity",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ety",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "lty",
+            "size": "2"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "istry",
+            "size": "5"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ary",
+            "size": "3"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "ory",
+            "size": "3"
+        },
+        {
+            "continuation": false,
+            "intact": false,
+            "pattern": "ify",
+            "size": "3"
+        },
+        {
+            "appendage": "t",
+            "continuation": true,
+            "intact": false,
+            "pattern": "ncy",
+            "size": "2"
+        },
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "acy",
+            "size": "3"
+        }
+    ],
+    "z": [
+        {
+            "continuation": true,
+            "intact": false,
+            "pattern": "iz",
+            "size": "2"
+        },
+        {
+            "appendage": "s",
+            "continuation": false,
+            "intact": false,
+            "pattern": "yz",
+            "size": "1"
+        }
+    ]
+};
+
+});
+
+require.define("/lib/natural/tokenizers/regexp_tokenizer.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, Rob Ellis, Chris Umbel
