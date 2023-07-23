@@ -5391,3 +5391,217 @@ function distance(s1, s2) {
         return 0.0;
 
     // count transpositions
+    var k = 0;
+
+    for(var i = 0; i < s1.length; i++) {
+      if(matches1[k]) {
+          while(!matches2[k] && k < matches2.length)
+                k++;
+          if(s1[i] != s2[k] &&  k < matches2.length)  {
+                t++;
+            }
+
+          k++;
+      }
+    }
+
+    //debug helpers:
+    //console.log(" - matches: " + m);
+    //console.log(" - transpositions: " + t);
+    t = t / 2.0;
+    return (m / s1.length + m / s2.length + (m - t) / m) / 3;
+}
+
+// Computes the Winkler distance between two string -- intrepreted from:
+// http://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
+// s1 is the first string to compare
+// s2 is the second string to compare
+// dj is the Jaro Distance (if you've already computed it), leave blank and the method handles it
+function JaroWinklerDistance(s1, s2, dj) {
+    var jaro;
+    (typeof(dj) == 'undefined')? jaro = distance(s1,s2) : jaro = dj;
+    var p = 0.1; //
+    var l = 0 // length of the matching prefix
+    while(s1[l] == s2[l] && l < 4)
+        l++;
+
+    return jaro + l * p * (1 - jaro);
+}
+module.exports = JaroWinklerDistance;
+});
+
+require.define("/lib/natural/distance/levenshtein_distance.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2012, Sid Nallu, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+/*
+ * contribution by sidred123
+ */
+
+/*
+ * Compute the Levenshtein distance between two strings.
+ * Algorithm based from Speech and Language Processing - Daniel Jurafsky and James H. Martin.
+ */
+
+function LevenshteinDistance (source, target, options) {
+    options = options || {};
+    options.insertion_cost = options.insertion_cost || 1;
+    options.deletion_cost = options.deletion_cost || 1;
+    options.substitution_cost = options.substitution_cost || 2;
+
+    var sourceLength = source.length;
+    var targetLength = target.length;
+    var distanceMatrix = [[0]];
+
+    for (var row =  1; row <= sourceLength; row++) {
+        distanceMatrix[row] = [];
+        distanceMatrix[row][0] = distanceMatrix[row-1][0] + options.deletion_cost;
+    }
+
+    for (var column = 1; column <= targetLength; column++) {
+        distanceMatrix[0][column] = distanceMatrix[0][column-1] + options.insertion_cost;
+    }
+
+    for (var row = 1; row <= sourceLength; row++) {
+        for (var column = 1; column <= targetLength; column++) {
+            var costToInsert = distanceMatrix[row][column-1] + options.insertion_cost;
+            var costToDelete = distanceMatrix[row-1][column] + options.deletion_cost;
+
+            var sourceElement = source[row-1];
+            var targetElement = target[column-1];
+            var costToSubstitute = distanceMatrix[row-1][column-1];
+            if (sourceElement !== targetElement) {
+                costToSubstitute = costToSubstitute + options.substitution_cost;
+            }
+            distanceMatrix[row][column] = Math.min(costToInsert, costToDelete, costToSubstitute);
+        }
+    }
+    return distanceMatrix[sourceLength][targetLength];
+}
+
+module.exports = LevenshteinDistance;
+});
+
+require.define("/lib/natural/distance/dice_coefficient.js",function(require,module,exports,__dirname,__filename,process){/*
+Copyright (c) 2011, John Crepezzi, Chris Umbel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+// Get all of the pairs of letters for a string
+var letterPairs = function (str) {
+  var numPairs = str.length - 1;
+  var pairs = new Array(numPairs);
+  for (var i = 0; i < numPairs; i++) {
+    pairs[i] = str.substring(i, i + 2);
+  }
+  return pairs;
+};
+
+// Get all of the pairs in all of the words for a string
+var wordLetterPairs = function (str) {
+  var allPairs = [], pairs;
+  var words = str.split(/\s+/);
+  for (var i = 0; i < words.length; i++) {
+    pairs = letterPairs(words[i]);
+    allPairs.push.apply(allPairs, pairs);
+  }
+  return allPairs;
+};
+
+// Perform some sanitization steps
+var sanitize = function (str) {
+  return str.toLowerCase().replace(/^\s+|\s+$/g, '');
+};
+
+// Compare two strings, and spit out a number from 0-1
+var compare = function (str1, str2) {
+  var pairs1 = wordLetterPairs(sanitize(str1));
+  var pairs2 = wordLetterPairs(sanitize(str2));
+  var intersection = 0, union = pairs1.length + pairs2.length;
+  var i, j, pair1, pair2;
+  for (i = 0; i < pairs1.length; i++) {
+    pair1 = pairs1[i];
+    for (j = 0; j < pairs2.length; j++) {
+      pair2 = pairs2[j];
+      if (pair1 == pair2) {
+        intersection ++;
+        delete pairs2[j];
+        break;
+      }
+    }
+  }
+  return 2 * intersection / union;
+};
+
+module.exports = compare;
+});
+
+require.define("/lib/natural/entry.js",function(require,module,exports,__dirname,__filename,process){window.natural = {};
+
+window.natural.SoundEx = require('./phonetics/soundex');
+window.natural.Metaphone = require('./phonetics/metaphone');
+window.natural.DoubleMetaphone = require('./phonetics/double_metaphone');
+window.natural.PorterStemmer = require('./stemmers/porter_stemmer');
+window.natural.PorterStemmerRu = require('./stemmers/porter_stemmer_ru');
+window.natural.LancasterStemmer = require('./stemmers/lancaster_stemmer');
+window.natural.AggressiveTokenizerRu = require('./tokenizers/aggressive_tokenizer_ru');
+window.natural.AggressiveTokenizer = require('./tokenizers/aggressive_tokenizer');
+window.natural.RegexpTokenizer = require('./tokenizers/regexp_tokenizer').RegexpTokenizer;
+window.natural.WordTokenizer = require('./tokenizers/regexp_tokenizer').WordTokenizer;
+window.natural.WordPunctTokenizer = require('./tokenizers/regexp_tokenizer').WordPunctTokenizer;
+window.natural.TreebankWordTokenizer = require('./tokenizers/treebank_word_tokenizer');
+/*
+window.natural.BayesClassifier = require('./classifiers/bayes_classifier');
+window.natural.LogisticRegressionClassifier = require('./classifiers/logistic_regression_classifier');
+*/
+window.natural.NounInflector = require('./inflectors/noun_inflector');
+window.natural.PresentVerbInflector = require('./inflectors/present_verb_inflector');
+window.natural.CountInflector = require('./inflectors/count_inflector');
+/*
+window.natural.WordNet = require('./wordnet/wordnet');
+*/
+window.natural.TfIdf = require('./tfidf/tfidf');
+window.natural.SentenceAnalyzer = require('./analyzers/sentence_analyzer');
+window.natural.stopwords = require('./util/stopwords').words;
+window.natural.NGrams = require('./ngrams/ngrams');
+window.natural.JaroWinklerDistance = require('./distance/jaro-winkler_distance');
+window.natural.LevenshteinDistance = require('./distance/levenshtein_distance');
+window.natural.DiceCoefficient = require('./distance/dice_coefficient');
+});
+require("/lib/natural/entry.js");
+})();
